@@ -4,11 +4,22 @@ Scrape top Github repositories and users based on keywords.
 
 ![demo](https://github.com/khuyentran1401/top-github-scraper/blob/master/figures/demo.gif?raw=True)
 
-## Installation
+## Setup
+
+**Installation**
 ```bash
 pip install top-github-scraper
 ```
-
+**Add Credentials**
+To make sure you can scrape many repositories and users, add your GitHub's credentials to `.env` file.
+```bash
+touch .env
+```
+Add your username and [token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) to `.env` file:
+```bash
+GITHUB_USERNAME=yourusername
+GITHUB_TOKEN=yourtoken
+```
 ## Usage
 **Get Top Github Repositories' URLs**
 ```python
