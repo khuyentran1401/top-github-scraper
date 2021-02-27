@@ -4,3 +4,4 @@ TODO.md
 .env
 *.json
 *.csv
+publish.sh

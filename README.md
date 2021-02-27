@@ -2,7 +2,12 @@
 
 Scrape top Github repositories and users based on keywords.
 
-![demo](figures/demo.gif)
+![demo](https://github.com/khuyentran1401/top-github-scraper/blob/master/figures/demo.gif?raw=True)
+
+## Installation
+```bash
+pip install top-github-scraper
+```
 
 ## Usage
 **Get Top Github Repositories' URLs**
@@ -83,7 +88,7 @@ will be saved to your current directory.
 
 `top-github-scraper` scrapes the owners as well as the contributors of the top repositories that pop up in the search when searching for a specific keyword on GitHub.
 
-![image](figures/machine_learning_results.png)
+![image](https://github.com/khuyentran1401/top-github-scraper/blob/master/figures/machine_learning_results.png?raw=True)
 For each user, `top-github-scraper` scrapes 16 data points:
 * `login`: username
 * `url`: URL of the user
