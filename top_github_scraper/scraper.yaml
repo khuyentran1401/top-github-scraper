@@ -1,0 +1,11 @@
+keyword: machine learning
+start_page_num: 0
+stop_page_num: 10
+
+data: 
+  path: data/raw/
+  urls: ${data.path}/top_repo_urls_page_${start_page_num}_${stop_page_num}.pkl
+  top_repo_info: ${data.path}/top_repo_info_page_${start_page_num}_${stop_page_num}.pkl
+  top_user_info: ${data.path}/top_user_info_page_${start_page_num}_page_${start_page_num}_${stop_page_num}.pkl
+
+max_n_top_contributors: 10
