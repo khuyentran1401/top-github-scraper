@@ -1,16 +1,15 @@
+import json
 import os
 import warnings
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List
 
-import requests
-
 import pandas as pd
+import requests
 from bs4 import BeautifulSoup
-from pathlib import Path
-from rich import print
-import json 
 from dotenv import load_dotenv
+from rich import print
 from rich.progress import track
 
 load_dotenv()
@@ -57,7 +56,10 @@ class ScrapeGithubUrl:
     def scrape_top_repo_url_multiple_pages(self):
         """Scrape urls of top Github repositories in multiple pages"""
         urls = []
-        for page_num in track(range(self.start_page_num, self.stop_page_num), description="Scraping top GitHub URLs..."):
+        for page_num in track(
+            range(self.start_page_num, self.stop_page_num),
+            description="Scraping top GitHub URLs...",
+        ):
             urls.extend(self._scrape_top_repo_url_one_page(page_num))
 
         return urls
@@ -73,9 +75,10 @@ class RepoScraper:
 
     def get_all_top_repo_information(self):
         top_repo_infos = []
-        for repo_url in track(self.repo_urls, description="Scraping top GitHub repositories..."):
+        for repo_url in track(
+            self.repo_urls, description="Scraping top GitHub repositories..."
+        ):
             top_repo_infos.append(self._get_repo_information(repo_url))
-
 
         return top_repo_infos
 
@@ -88,17 +91,21 @@ class RepoScraper:
         for info in info_to_scrape:
             repo_important_info[info] = repo_info[info]
 
-        repo_important_info["contributors"] = self._get_contributor_repo_of_one_repo(
-            repo_url
-        )
+        repo_important_info[
+            "contributors"
+        ] = self._get_contributor_repo_of_one_repo(repo_url)
 
         return repo_important_info
 
     def _get_contributor_repo_of_one_repo(self, repo_url: str):
 
         # https://api.github.com/repos/josephmisiti/awesome-machine-learning/contributors
-        contributor_url = f"https://api.github.com/repos{repo_url}/contributors"
-        contributor_page = requests.get(contributor_url, auth=(USERNAME, TOKEN)).json()
+        contributor_url = (
+            f"https://api.github.com/repos{repo_url}/contributors"
+        )
+        contributor_page = requests.get(
+            contributor_url, auth=(USERNAME, TOKEN)
+        ).json()
 
         contributors_info = {"login": [], "url": [], "contributions": []}
 
@@ -116,7 +123,9 @@ class RepoScraper:
         return contributors_info
 
     @staticmethod
-    def _get_contributor_general_info(contributors_info: List[dict], contributor: dict):
+    def _get_contributor_general_info(
+        contributors_info: List[dict], contributor: dict
+    ):
 
         contributors_info["login"].append(contributor["login"])
         contributors_info["url"].append(contributor["url"])
@@ -157,7 +166,11 @@ class DataProcessor:
             "created_at",
             "updated_at",
         ]
-        return {key: val for key, val in repo_info.items() if key in repo_stats_list}
+        return {
+            key: val
+            for key, val in repo_info.items()
+            if key in repo_stats_list
+        }
 
 
 class UserProfileGetter:
@@ -182,49 +195,89 @@ class UserProfileGetter:
     def _get_one_contributor_profile(self, profile_url: str):
         profile = requests.get(profile_url, auth=(USERNAME, TOKEN)).json()
         return {
-            key: val for key, val in profile.items() if key in self.profile_features
+            key: val
+            for key, val in profile.items()
+            if key in self.profile_features
         }
 
     def get_all_contributor_profiles(self):
 
         all_contributors = [
-            self._get_one_contributor_profile(url) for url in track(self.data["url"], description="Scraping top GitHub profiles...")
+            self._get_one_contributor_profile(url)
+            for url in track(
+                self.data["url"], description="Scraping top GitHub profiles..."
+            )
         ]
-        all_contributors_df = pd.DataFrame(all_contributors).reset_index(drop=True)
+        all_contributors_df = pd.DataFrame(all_contributors).reset_index(
+            drop=True
+        )
 
         return pd.concat([self.data, all_contributors_df], axis=1)
 
-def scrape_github_url(keyword: str, save_path: str='top_repo_urls', start_page: int=0, stop_page: int=50):
+
+def scrape_github_url(
+    keyword: str,
+    save_path: str = "top_repo_urls",
+    start_page: int = 0,
+    stop_page: int = 50,
+):
     save_path += f"_{keyword}_{start_page}_{stop_page}.json"
-    repo_urls =  ScrapeGithubUrl(keyword, start_page, stop_page).scrape_top_repo_url_multiple_pages()
-    with open(save_path, 'w') as outfile:
+    repo_urls = ScrapeGithubUrl(
+        keyword, start_page, stop_page
+    ).scrape_top_repo_url_multiple_pages()
+    with open(save_path, "w") as outfile:
         json.dump(repo_urls, outfile)
 
-def scrape_repo(keyword: int, max_n_top_contributors: int=10,  start_page:int=0, stop_page:int=50, 
-                url_save_path: str="top_repo_urls", repo_save_path: str="top_repo_info"):
-    full_url_save_path = f"{url_save_path}_{keyword}_{start_page}_{stop_page}.json"
+
+def scrape_repo(
+    keyword: int,
+    max_n_top_contributors: int = 10,
+    start_page: int = 0,
+    stop_page: int = 50,
+    url_save_path: str = "top_repo_urls",
+    repo_save_path: str = "top_repo_info",
+):
+    full_url_save_path = (
+        f"{url_save_path}_{keyword}_{start_page}_{stop_page}.json"
+    )
     repo_save_path += f"_{keyword}_{start_page}_{stop_page}.json"
 
     if not Path(full_url_save_path).exists():
         scrape_github_url(keyword, url_save_path, start_page, stop_page)
-    with open(full_url_save_path, 'r') as infile:
+    with open(full_url_save_path, "r") as infile:
         repo_urls = json.load(infile)
-        top_repos =  RepoScraper(repo_urls, max_n_top_contributors).get_all_top_repo_information()
-        with open(repo_save_path, 'w') as outfile:
+        top_repos = RepoScraper(
+            repo_urls, max_n_top_contributors
+        ).get_all_top_repo_information()
+        with open(repo_save_path, "w") as outfile:
             json.dump(top_repos, outfile)
 
-def get_user_profile(keyword: int, max_n_top_contributors: int=10,  start_page:int=0, stop_page:int=50, 
-                    url_save_path: str="top_repo_urls", repo_save_path: str="top_repo_info",
-                    user_save_path: str="top_user_info"):
-    full_repo_save_path = f"{repo_save_path}_{keyword}_{start_page}_{stop_page}.json"
+
+def get_user_profile(
+    keyword: int,
+    max_n_top_contributors: int = 10,
+    start_page: int = 0,
+    stop_page: int = 50,
+    url_save_path: str = "top_repo_urls",
+    repo_save_path: str = "top_repo_info",
+    user_save_path: str = "top_user_info",
+):
+    full_repo_save_path = (
+        f"{repo_save_path}_{keyword}_{start_page}_{stop_page}.json"
+    )
     user_save_path += f"_{keyword}_{start_page}_{stop_page}.csv"
     if not Path(full_repo_save_path).exists():
-        scrape_repo(keyword, max_n_top_contributors, start_page, stop_page, url_save_path, repo_save_path)
+        scrape_repo(
+            keyword,
+            max_n_top_contributors,
+            start_page,
+            stop_page,
+            url_save_path,
+            repo_save_path,
+        )
     with open(full_repo_save_path, "r") as infile:
         repo_info = json.load(infile)
         repo_info = DataProcessor(repo_info).process()
         top_users = UserProfileGetter(repo_info).get_all_contributor_profiles()
         print(top_users)
         top_users.to_csv(user_save_path)
-        
-
