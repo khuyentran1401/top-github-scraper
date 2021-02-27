@@ -101,6 +101,7 @@ will be saved to your current directory.
 `top-github-scraper` scrapes the owners as well as the contributors of the top repositories that pop up in the search when searching for a specific keyword on GitHub.
 
 ![image](https://github.com/khuyentran1401/top-github-scraper/blob/master/figures/machine_learning_results.png?raw=True)
+
 For each user, `top-github-scraper` scrapes 16 data points:
 * `login`: username
 * `url`: URL of the user
