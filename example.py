@@ -6,5 +6,5 @@ if __name__=='__main__':
     max_n_top_contributors = 2
 
     # get_top_urls(keyword, stop_page=stop_page)
-    # get_top_repos(keyword, stop_page=1, max_n_top_contributors=max_n_top_contributors)
-    get_top_users(keyword, max_n_top_contributors=max_n_top_contributors, stop_page=stop_page)
+    get_top_repos(keyword, stop_page=1, max_n_top_contributors=max_n_top_contributors)
+    # get_top_users(keyword, max_n_top_contributors=max_n_top_contributors, stop_page=stop_page)

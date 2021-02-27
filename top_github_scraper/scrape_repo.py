@@ -85,7 +85,6 @@ class RepoScraper:
     def _get_repo_information(self, repo_url: str):
         repo_info_url = f"https://api.github.com/repos{repo_url}"
         repo_info = requests.get(repo_info_url, auth=(USERNAME, TOKEN)).json()
-
         info_to_scrape = ["stargazers_count", "forks_count"]
         repo_important_info = {}
         for info in info_to_scrape:

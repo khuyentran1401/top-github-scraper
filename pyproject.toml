@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "top-github-scraper"
-version = "0.1.0.1"
+version = "0.1.0.4"
 description = "Scrape top GitHub repositories and users based on keyword"
 authors = ["khuyentran1401 <khuyentran1476@gmail.com>"]
 homepage = "https://github.com/khuyentran1401/top-github-scraper"
