@@ -7,11 +7,11 @@ import requests
 
 import pandas as pd
 from bs4 import BeautifulSoup
-from tqdm import tqdm
 from pathlib import Path
 from rich import print
 import json 
 from dotenv import load_dotenv
+from rich.progress import track
 
 load_dotenv()
 warnings.filterwarnings("ignore")
@@ -57,7 +57,7 @@ class ScrapeGithubUrl:
     def scrape_top_repo_url_multiple_pages(self):
         """Scrape urls of top Github repositories in multiple pages"""
         urls = []
-        for page_num in tqdm(range(self.start_page_num, self.stop_page_num)):
+        for page_num in track(range(self.start_page_num, self.stop_page_num), description="Scraping top GitHub URLs..."):
             urls.extend(self._scrape_top_repo_url_one_page(page_num))
 
         return urls
@@ -73,7 +73,7 @@ class RepoScraper:
 
     def get_all_top_repo_information(self):
         top_repo_infos = []
-        for repo_url in tqdm(self.repo_urls):
+        for repo_url in track(self.repo_urls, description="Scraping top GitHub repositories..."):
             top_repo_infos.append(self._get_repo_information(repo_url))
 
 
@@ -188,7 +188,7 @@ class UserProfileGetter:
     def get_all_contributor_profiles(self):
 
         all_contributors = [
-            self._get_one_contributor_profile(url) for url in tqdm(self.data["url"])
+            self._get_one_contributor_profile(url) for url in track(self.data["url"], description="Scraping top GitHub profiles...")
         ]
         all_contributors_df = pd.DataFrame(all_contributors).reset_index(drop=True)
 
