@@ -2,3 +2,5 @@
 __pycache__
 TODO.md
 .env
+*.json
+*.csv
