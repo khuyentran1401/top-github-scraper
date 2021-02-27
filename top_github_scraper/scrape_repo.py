@@ -215,12 +215,26 @@ class UserProfileGetter:
         return pd.concat([self.data, all_contributors_df], axis=1)
 
 
-def scrape_github_url(
+def get_top_urls(
     keyword: str,
     save_path: str = "top_repo_urls",
     start_page: int = 0,
     stop_page: int = 50,
 ):
+    """Get the URLs of the repositories pop up when searching for a specific
+    keyword on GitHub.
+
+    Parameters
+    ----------
+    keyword : str
+        Keyword to search for (.i.e, machine learning)
+    save_path : str, optional
+        where to save the output file, by default "top_repo_urls"
+    start_page : int, optional
+        page number to start scraping from, by default 0
+    stop_page : int, optional
+        page number of the last page to scrape, by default 50
+    """
     save_path += f"_{keyword}_{start_page}_{stop_page}.json"
     repo_urls = ScrapeGithubUrl(
         keyword, start_page, stop_page
@@ -229,7 +243,7 @@ def scrape_github_url(
         json.dump(repo_urls, outfile)
 
 
-def scrape_repo(
+def get_top_repos(
     keyword: int,
     max_n_top_contributors: int = 10,
     start_page: int = 0,
@@ -237,13 +251,31 @@ def scrape_repo(
     url_save_path: str = "top_repo_urls",
     repo_save_path: str = "top_repo_info",
 ):
+    """Get the information of the repositories pop up when searching for a specific
+    keyword on GitHub.
+
+    Parameters
+    ----------
+    keyword : str
+        Keyword to search for (.i.e, machine learning)
+    max_n_top_contributors: int
+        number of top contributors in each repository to scrape from, by default 10
+    start_page : int, optional
+        page number to start scraping from, by default 0
+    stop_page : int, optional
+        page number of the last page to scrape, by default 50
+    url_save_path : str, optional
+        where to save the output file of URLs, by default "top_repo_urls"
+    repo_save_path : str, optional
+        where to save the output file of repositories' information, by default "top_repo_info"
+    """
     full_url_save_path = (
         f"{url_save_path}_{keyword}_{start_page}_{stop_page}.json"
     )
     repo_save_path += f"_{keyword}_{start_page}_{stop_page}.json"
 
     if not Path(full_url_save_path).exists():
-        scrape_github_url(keyword, url_save_path, start_page, stop_page)
+        get_top_urls(keyword, url_save_path, start_page, stop_page)
     with open(full_url_save_path, "r") as infile:
         repo_urls = json.load(infile)
         top_repos = RepoScraper(
@@ -253,7 +285,7 @@ def scrape_repo(
             json.dump(top_repos, outfile)
 
 
-def get_user_profile(
+def get_top_users(
     keyword: int,
     max_n_top_contributors: int = 10,
     start_page: int = 0,
@@ -262,12 +294,32 @@ def get_user_profile(
     repo_save_path: str = "top_repo_info",
     user_save_path: str = "top_user_info",
 ):
+    """
+    Get the information of the owners and contributors of the repositories pop up when searching for a specific
+    keyword on GitHub.
+    Parameters
+    ----------
+    keyword : str
+        Keyword to search for (.i.e, machine learning)
+    max_n_top_contributors: int
+        number of top contributors in each repository to scrape from, by default 10
+    start_page : int, optional
+        page number to start scraping from, by default 0
+    stop_page : int, optional
+        page number of the last page to scrape, by default 50
+    url_save_path : str, optional
+        where to save the output file of URLs, by default "top_repo_urls"
+    repo_save_path : str, optional
+        where to save the output file of repositories' information, by default "top_repo_info"
+    user_save_path : str, optional
+        where to save the output file of users' profiles, by default "top_user_info"
+    """
     full_repo_save_path = (
         f"{repo_save_path}_{keyword}_{start_page}_{stop_page}.json"
     )
     user_save_path += f"_{keyword}_{start_page}_{stop_page}.csv"
     if not Path(full_repo_save_path).exists():
-        scrape_repo(
+        get_top_repos(
             keyword,
             max_n_top_contributors,
             start_page,

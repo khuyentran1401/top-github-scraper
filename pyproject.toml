@@ -1,8 +1,13 @@
 [tool.poetry]
-name = "top_github_scraper"
+name = "top-github-scraper"
 version = "0.1.0"
-description = "Scrape top github repos and users"
+description = "Scrape top GitHub repositories and users based on keyword"
 authors = ["khuyentran1401 <khuyentran1476@gmail.com>"]
+homepage = "https://github.com/khuyentran1401/top-github-scraper"
+repository = "https://github.com/khuyentran1401/top-github-scraper"
+keywords = ["GitHub", "github-api", "scraping", "python"]
+readme = "README.md"
+license = "Apache-2.0"
 
 [tool.poetry.dependencies]
 python = ">=3.7.1,<4.0"

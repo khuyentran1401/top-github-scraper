@@ -1,1 +1,1 @@
-from .scrape_repo import scrape_github_url, scrape_repo, get_user_profile
+from .scrape_repo import get_top_urls, get_top_repos, get_top_users
