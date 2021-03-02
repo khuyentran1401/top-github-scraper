@@ -7,63 +7,16 @@ from typing import List
 
 import pandas as pd
 import requests
-from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from rich import print
 from rich.progress import track
+from top_github_scraper.utils import ScrapeGithubUrl, UserProfileGetter
 
 load_dotenv()
 warnings.filterwarnings("ignore")
 
 USERNAME = os.getenv("GITHUB_USERNAME")
 TOKEN = os.getenv("GITHUB_TOKEN")
-
-
-@dataclass
-class ScrapeGithubUrl:
-    """Scrape top Github Repos urls based on a certain keyword
-
-    Returns
-    -------
-    keyword: str
-        keyword to search on Github
-    start_page_num: int
-        page number to start scraping. The default is 0
-    stop_page_num: int
-        page number to stop scraping
-    """
-
-    keyword: str
-    start_page_num: int
-    stop_page_num: int
-
-    @staticmethod
-    def _keyword_to_url(page_num: int, keyword: str):
-        """Change keyword to a url"""
-        keyword_no_space = ("+").join(keyword.split(" "))
-        return f"https://github.com/search?o=desc&p={str(page_num)}&q={keyword_no_space}&s=&type=Repositories"
-
-    def _scrape_top_repo_url_one_page(self, page_num: int):
-        """Scrape urls of top Github repositories in 1 page"""
-        url = self._keyword_to_url(page_num, self.keyword)
-        page = requests.get(url)
-
-        soup = BeautifulSoup(page.text, "html.parser")
-        a_tags = soup.find_all("a", class_="v-align-middle")
-        urls = [a_tag.get("href") for a_tag in a_tags]
-        return urls
-
-    def scrape_top_repo_url_multiple_pages(self):
-        """Scrape urls of top Github repositories in multiple pages"""
-        urls = []
-        for page_num in track(
-            range(self.start_page_num, self.stop_page_num),
-            description="Scraping top GitHub URLs...",
-        ):
-            urls.extend(self._scrape_top_repo_url_one_page(page_num))
-
-        return urls
-
 
 class RepoScraper:
     """Scrape information of repos and the
@@ -172,52 +125,11 @@ class DataProcessor:
         }
 
 
-class UserProfileGetter:
-    """Get the information from users' homepage"""
-
-    def __init__(self, data: pd.DataFrame):
-        self.data = data
-        self.profile_features = [
-            "type",
-            "name",
-            "company",
-            "location",
-            "email",
-            "hireable",
-            "bio",
-            "public_repos",
-            "public_gists",
-            "followers",
-            "following",
-        ]
-
-    def _get_one_contributor_profile(self, profile_url: str):
-        profile = requests.get(profile_url, auth=(USERNAME, TOKEN)).json()
-        return {
-            key: val
-            for key, val in profile.items()
-            if key in self.profile_features
-        }
-
-    def get_all_contributor_profiles(self):
-
-        all_contributors = [
-            self._get_one_contributor_profile(url)
-            for url in track(
-                self.data["url"], description="Scraping top GitHub profiles..."
-            )
-        ]
-        all_contributors_df = pd.DataFrame(all_contributors).reset_index(
-            drop=True
-        )
-
-        return pd.concat([self.data, all_contributors_df], axis=1)
-
-
-def get_top_urls(
+def get_top_repo_urls(
     keyword: str,
+    sort_by: str='', 
     save_path: str = "top_repo_urls",
-    start_page: int = 0,
+    start_page: int = 1,
     stop_page: int = 50,
 ):
     """Get the URLs of the repositories pop up when searching for a specific
@@ -227,16 +139,20 @@ def get_top_urls(
     ----------
     keyword : str
         Keyword to search for (.i.e, machine learning)
+    sort_by: str 
+        sort by best match or most stars, by default '', which will sort by best match. 
+        Use 'stars' to sort by most stars.
     save_path : str, optional
         where to save the output file, by default "top_repo_urls"
     start_page : int, optional
-        page number to start scraping from, by default 0
+        page number to start scraping from, by default 1
     stop_page : int, optional
         page number of the last page to scrape, by default 50
     """
-    save_path += f"_{keyword}_{start_page}_{stop_page}.json"
+    save_path += f"_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
+    print(save_path)
     repo_urls = ScrapeGithubUrl(
-        keyword, start_page, stop_page
+        keyword, 'Repositories', sort_by, start_page, stop_page
     ).scrape_top_repo_url_multiple_pages()
     with open(save_path, "w") as outfile:
         json.dump(repo_urls, outfile)
@@ -244,8 +160,9 @@ def get_top_urls(
 
 def get_top_repos(
     keyword: int,
+    sort_by: str='',
     max_n_top_contributors: int = 10,
-    start_page: int = 0,
+    start_page: int = 1,
     stop_page: int = 50,
     url_save_path: str = "top_repo_urls",
     repo_save_path: str = "top_repo_info",
@@ -257,10 +174,13 @@ def get_top_repos(
     ----------
     keyword : str
         Keyword to search for (.i.e, machine learning)
+    sort_by: str 
+        sort by best match or most stars, by default '', which will sort by best match. 
+        Use 'stars' to sort by most stars.
     max_n_top_contributors: int
         number of top contributors in each repository to scrape from, by default 10
     start_page : int, optional
-        page number to start scraping from, by default 0
+        page number to start scraping from, by default 1
     stop_page : int, optional
         page number of the last page to scrape, by default 50
     url_save_path : str, optional
@@ -269,12 +189,12 @@ def get_top_repos(
         where to save the output file of repositories' information, by default "top_repo_info"
     """
     full_url_save_path = (
-        f"{url_save_path}_{keyword}_{start_page}_{stop_page}.json"
+        f"{url_save_path}_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
     )
-    repo_save_path += f"_{keyword}_{start_page}_{stop_page}.json"
+    repo_save_path += f"_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
 
     if not Path(full_url_save_path).exists():
-        get_top_urls(keyword, url_save_path, start_page, stop_page)
+        get_top_repo_urls(keyword=keyword, sort_by=sort_by, save_path=url_save_path, start_page=start_page, stop_page=stop_page)
     with open(full_url_save_path, "r") as infile:
         repo_urls = json.load(infile)
         top_repos = RepoScraper(
@@ -284,14 +204,16 @@ def get_top_repos(
             json.dump(top_repos, outfile)
 
 
-def get_top_users(
+def get_top_contributors(
     keyword: int,
+    sort_by: str='', 
     max_n_top_contributors: int = 10,
-    start_page: int = 0,
+    start_page: int = 1,
     stop_page: int = 50,
+    get_user_info_only: bool=True, 
     url_save_path: str = "top_repo_urls",
     repo_save_path: str = "top_repo_info",
-    user_save_path: str = "top_user_info",
+    user_save_path: str = "top_contributor_info",
 ):
     """
     Get the information of the owners and contributors of the repositories pop up when searching for a specific
@@ -300,35 +222,49 @@ def get_top_users(
     ----------
     keyword : str
         Keyword to search for (.i.e, machine learning)
+    sort_by: str 
+        sort by best match or most stars, by default '', which will sort by best match. 
+        Use 'stars' to sort by most stars.
     max_n_top_contributors: int
         number of top contributors in each repository to scrape from, by default 10
     start_page : int, optional
-        page number to start scraping from, by default 0
+        page number to start scraping from, by default 1
     stop_page : int, optional
         page number of the last page to scrape, by default 50
+    get_user_info_only: bool, optional
+        whether to get the information of only contributors or to get the information of both contributors 
+        and repositories contributors were scraped from, by default True, which means to get only contributors' information
     url_save_path : str, optional
         where to save the output file of URLs, by default "top_repo_urls"
     repo_save_path : str, optional
         where to save the output file of repositories' information, by default "top_repo_info"
     user_save_path : str, optional
-        where to save the output file of users' profiles, by default "top_user_info"
+        where to save the output file of users' profiles, by default "top_contributor_info"
     """
     full_repo_save_path = (
-        f"{repo_save_path}_{keyword}_{start_page}_{stop_page}.json"
+        f"{repo_save_path}_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
     )
-    user_save_path += f"_{keyword}_{start_page}_{stop_page}.csv"
+    user_save_path += f"_{keyword}_{sort_by}_{start_page}_{stop_page}.csv"
     if not Path(full_repo_save_path).exists():
         get_top_repos(
-            keyword,
-            max_n_top_contributors,
-            start_page,
-            stop_page,
-            url_save_path,
-            repo_save_path,
+            keyword=keyword,
+            sort_by=sort_by,
+            max_n_top_contributors=max_n_top_contributors,
+            start_page=start_page,
+            stop_page=stop_page,
+            url_save_path=url_save_path,
+            repo_save_path=repo_save_path,
         )
     with open(full_repo_save_path, "r") as infile:
         repo_info = json.load(infile)
         repo_info = DataProcessor(repo_info).process()
-        top_users = UserProfileGetter(repo_info).get_all_contributor_profiles()
-        print(top_users)
-        top_users.to_csv(user_save_path)
+        urls = repo_info['url']
+        top_users = UserProfileGetter(urls).get_all_user_profiles()
+        if get_user_info_only:
+            top_users.to_csv(user_save_path)
+            print(top_users)
+        else:
+            repo_and_top_users = pd.concat([repo_info, top_users], axis=1)
+            repo_and_top_users = repo_and_top_users.loc[:,~repo_and_top_users.columns.duplicated()]
+            repo_and_top_users.to_csv(user_save_path)
+            print(repo_and_top_users)
