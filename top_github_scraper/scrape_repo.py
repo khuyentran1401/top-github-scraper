@@ -19,7 +19,6 @@ warnings.filterwarnings("ignore")
 USERNAME = os.getenv("GITHUB_USERNAME")
 TOKEN = os.getenv("GITHUB_TOKEN")
 
-
 class RepoScraper:
     """Scrape information of repos and the
     contributors of those repositories"""
