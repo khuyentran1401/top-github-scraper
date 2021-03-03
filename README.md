@@ -28,8 +28,7 @@ GITHUB_TOKEN=yourtoken
 ```python
 from top_github_scraper import get_top_repo_urls
 
-get_top_repo_urls(keyword="machine learning", stop_page=1
-0)
+get_top_repo_urls(keyword="machine learning", stop_page=10)
 ```
 
 Output at `top_repo_urls_<keyword>_<sort_by>_<start_page>_<end_page>.json`:
