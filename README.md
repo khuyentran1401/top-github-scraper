@@ -28,7 +28,8 @@ GITHUB_TOKEN=yourtoken
 ```python
 from top_github_scraper import get_top_repo_urls
 
-get_top_repo_urls(keyword="machine learning", stop_page=20)
+get_top_repo_urls(keyword="machine learning", stop_page=1
+0)
 ```
 
 Output at `top_repo_urls_<keyword>_<sort_by>_<start_page>_<end_page>.json`:
@@ -51,7 +52,7 @@ Output at `top_repo_urls_<keyword>_<sort_by>_<start_page>_<end_page>.json`:
 ```python
 from top_github_scraper import get_top_repos
 
-get_top_repos("machine learning", stop_page=20)
+get_top_repos("machine learning", stop_page=10)
 ```
 Output for 1 repository at `top_repo_info_<keyword>_<sort_by>_<start_page>_<end_page>.json` :
 ```python
@@ -103,7 +104,7 @@ Output for 1 repository at `top_repo_info_<keyword>_<sort_by>_<start_page>_<end_
 ```python
 from top_github_scraper import get_top_contributors
 
-get_top_contributors("machine learning", stop_page=20)
+get_top_contributors("machine learning", stop_page=10)
 ```
 Output at `top_contributor_info_<keyword>_<sort_by>_<start_page>_<end_page>.csv`:
 
