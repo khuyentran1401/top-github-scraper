@@ -171,6 +171,27 @@ Output at `top_user_info_<keyword>_<start_page>_<end_page>.csv`
         where to save the output file of URLs, by default `"top_repo_urls"`
     * `repo_save_path` : str, optional
         where to save the output file of repositories' information, by default `"top_repo_info"`
+* **get_top_contributors**
+    * `keyword` : str
+        Keyword to search for (.i.e, machine learning)
+    * `sort_by`: str 
+        sort by best match or most stars, by default `''`, which will sort by best match. 
+        Use `'stars'` to sort by most stars.
+    * `max_n_top_contributors`: int
+        number of top contributors in each repository to scrape from, by default `10`
+    * `start_page` : int, optional
+        page number to start scraping from, by default `1`
+    * `stop_page` : int, optional
+        page number of the last page to scrape, by default `10`
+    * `get_user_info_only`: bool, optional
+        whether to get the information of only contributors or to get the information of both contributors 
+        and repositories contributors were scraped from, by default `True`, which means to get only contributors' information
+    * `url_save_path` : str, optional
+        where to save the output file of URLs, by default `"top_repo_urls"`
+    * `repo_save_path` : str, optional
+        where to save the output file of repositories' information, by default `"top_repo_info"` 
+    * `user_save_path` : str, optional
+        where to save the output file of users' profiles, by default `"top_contributor_info"`
 * **get_top_users**
     * `keyword` : str
         Keyword to search for (.i.e, machine learning)
@@ -207,9 +228,6 @@ Output at `top_user_info_<keyword>_<start_page>_<end_page>.csv`
 For each user, `top-github-scraper` scrapes 16 data points:
 * `login`: username
 * `url`: URL of the user
-* `contributions`: Number of contributions to the repository that the user is scraped from
-* `stargazers_count`: Number of stars of the repository that the user is scraped from
-* `forks_count`: Number of forks of the repository that the user is scraped from
 * `type`: Whether this account is a user or an organization
 * `name`: Name of the user
 * `company`: User's company
