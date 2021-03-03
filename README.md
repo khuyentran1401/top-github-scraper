@@ -1,4 +1,4 @@
-# Top Github Users Scraper
+# Top Github Scraper
 
 Scrape top Github repositories and users based on keywords. 
 
