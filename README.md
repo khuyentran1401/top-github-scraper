@@ -154,7 +154,7 @@ Output at `top_user_info_<keyword>_<start_page>_<end_page>.csv`
     * `start_page` : int, optional
         page number to start scraping from, by default `1`
     * `stop_page` : int, optional
-        page number of the last page to scrape, by default `50`
+        page number of the last page to scrape, by default `10`
 * **get_top_repos**
     * `keyword` : str
         Keyword to search for (.i.e, machine learning)
@@ -166,7 +166,7 @@ Output at `top_user_info_<keyword>_<start_page>_<end_page>.csv`
     * `start_page` : int, optional
         page number to start scraping from, by default `1`
     * `stop_page` : int, optional
-        page number of the last page to scrape, by default `50`
+        page number of the last page to scrape, by default `10`
     * `url_save_path` : str, optional
         where to save the output file of URLs, by default `"top_repo_urls"`
     * `repo_save_path` : str, optional
@@ -182,7 +182,7 @@ Output at `top_user_info_<keyword>_<start_page>_<end_page>.csv`
     * `start_page` : int, optional
         page number to start scraping from, by default `1`
     * `stop_page` : int, optional
-        page number of the last page to scrape, by default `50`
+        page number of the last page to scrape, by default `10`
     * `url_save_path` : str, optional
         where to save the output file of URLs, by default `"top_repo_urls"`
     * `repo_save_path` : str, optional
@@ -197,7 +197,7 @@ Output at `top_user_info_<keyword>_<start_page>_<end_page>.csv`
     * `start_page` : int, optional
         page number to start scraping from, by default `1`
     * `stop_page` : int, optional
-        page number of the last page to scrape, by default `50`
+        page number of the last page to scrape, by default `10`
 ## How the Data is Scraped
 
 `top-github-scraper` scrapes the owners as well as the contributors of the top repositories that pop up in the search when searching for a specific keyword on GitHub.

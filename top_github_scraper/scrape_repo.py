@@ -12,6 +12,7 @@ from rich import print
 from rich.progress import track
 from tqdm import tqdm
 from top_github_scraper.utils import ScrapeGithubUrl, UserProfileGetter, isnotebook
+import logging
 
 load_dotenv()
 warnings.filterwarnings("ignore")
@@ -157,14 +158,18 @@ def get_top_repo_urls(
     stop_page : int, optional
         page number of the last page to scrape, by default 50
     """
-    save_path += f"_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
-    print(save_path)
-    repo_urls = ScrapeGithubUrl(
-        keyword, 'Repositories', sort_by, start_page, stop_page
-    ).scrape_top_repo_url_multiple_pages()
+    try: 
+        save_path += f"_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
+        print(save_path)
+        repo_urls = ScrapeGithubUrl(
+            keyword, 'Repositories', sort_by, start_page, stop_page
+        ).scrape_top_repo_url_multiple_pages()
 
-    with open(save_path, "w") as outfile:
-        json.dump(repo_urls, outfile)
+        with open(save_path, "w") as outfile:
+            json.dump(repo_urls, outfile)
+    except:
+        logging.error("""You ran out of rate limit. If you ran out of rate limit while requesting as an authenticated user, 
+        either decrease the number of pages to scrape or to wait 1 hour until more requests are available.""")
 
     return repo_urls
 
@@ -199,23 +204,27 @@ def get_top_repos(
     repo_save_path : str, optional
         where to save the output file of repositories' information, by default "top_repo_info"
     """
-    full_url_save_path = (
-        f"{url_save_path}_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
-    )
-    repo_save_path += f"_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
+    try:
+        full_url_save_path = (
+            f"{url_save_path}_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
+        )
+        repo_save_path += f"_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
 
-    if not Path(full_url_save_path).exists():
-        get_top_repo_urls(keyword=keyword, sort_by=sort_by, save_path=url_save_path, start_page=start_page, stop_page=stop_page)
-    with open(full_url_save_path, "r") as infile:
-        repo_urls = json.load(infile)
-        top_repos = RepoScraper(
-            repo_urls, max_n_top_contributors
-        ).get_all_top_repo_information()
+        if not Path(full_url_save_path).exists():
+            get_top_repo_urls(keyword=keyword, sort_by=sort_by, save_path=url_save_path, start_page=start_page, stop_page=stop_page)
+        with open(full_url_save_path, "r") as infile:
+            repo_urls = json.load(infile)
+            top_repos = RepoScraper(
+                repo_urls, max_n_top_contributors
+            ).get_all_top_repo_information()
 
-    with open(repo_save_path, "w") as outfile:
-        json.dump(top_repos, outfile)
-    return top_repos
+        with open(repo_save_path, "w") as outfile:
+            json.dump(top_repos, outfile)
+        return top_repos
 
+    except:  
+        logging.error("""You ran out of rate limit. If you ran out of rate limit while requesting as an authenticated user, 
+        either decrease the number of pages to scrape or to wait 1 hour until more requests are available.""")
 
 def get_top_contributors(
     keyword: int,
@@ -254,6 +263,7 @@ def get_top_contributors(
     user_save_path : str, optional
         where to save the output file of users' profiles, by default "top_contributor_info"
     """
+    
     full_repo_save_path = (
         f"{repo_save_path}_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
     )

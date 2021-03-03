@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from typing import List
 from IPython import get_ipython
 from tqdm import tqdm
+import logging
 
 
 load_dotenv()
@@ -24,7 +25,7 @@ USERNAME = os.getenv("GITHUB_USERNAME")
 TOKEN = os.getenv("GITHUB_TOKEN")
 
 if USERNAME is None or TOKEN is None:
-    print("""You are using Github API as an unauthenticated user. For unauthenticated requests, the rate limit allows for up to 60 requests per hour.
+    logging.warning("""You are using Github API as an unauthenticated user. For unauthenticated requests, the rate limit allows for up to 60 requests per hour.
      Follow the instruction here to be authenticated and increase your rate limit: https://github.com/khuyentran1401/top-github-scraper#setup""")
 @dataclass
 class ScrapeGithubUrl:
