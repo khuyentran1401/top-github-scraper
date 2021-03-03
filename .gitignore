@@ -6,3 +6,5 @@ TODO.md
 *.csv
 publish.sh
 dist
+experiment.py
+test.py.ipynb

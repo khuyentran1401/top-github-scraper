@@ -81,4 +81,4 @@ def get_top_users(
         urls = [url + user for user in user_urls]
         top_users = UserProfileGetter(urls).get_all_user_profiles()
         top_users.to_csv(user_save_path)
-        print(top_users)
+        return top_users

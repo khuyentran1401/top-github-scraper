@@ -16,6 +16,8 @@ bs4 = "^0.0.1"
 pandas = "^1.2.2"
 rich = "^9.12.0"
 python-dotenv = "^0.15.0"
+ipython = "^7.21.0"
+tqdm = "^4.58.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.10.1"

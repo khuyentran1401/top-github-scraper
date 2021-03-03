@@ -8,6 +8,9 @@ import os
 import warnings
 from dotenv import load_dotenv
 from typing import List
+from IPython import get_ipython
+from tqdm import tqdm
+
 
 load_dotenv()
 warnings.filterwarnings("ignore")
@@ -69,11 +72,18 @@ class ScrapeGithubUrl:
     def scrape_top_repo_url_multiple_pages(self):
         """Scrape urls of top Github repositories in multiple pages"""
         urls = []
-        for page_num in track(
-            range(self.start_page_num, self.stop_page_num),
-            description="Scraping top GitHub URLs...",
-        ):
-            urls.extend(self._scrape_top_repo_url_one_page(page_num))
+        if isnotebook():
+            for page_num in tqdm(
+                range(self.start_page_num, self.stop_page_num),
+                desc="Scraping top GitHub URLs...",
+            ):
+                urls.extend(self._scrape_top_repo_url_one_page(page_num))
+        else: 
+            for page_num in track(
+                range(self.start_page_num, self.stop_page_num),
+                description="Scraping top GitHub URLs...",
+            ):
+                urls.extend(self._scrape_top_repo_url_one_page(page_num))
 
         return urls
 
@@ -108,14 +118,35 @@ class UserProfileGetter:
 
     def get_all_user_profiles(self):
 
-        all_contributors = [
+        if isnotebook():
+            all_contributors = [
             self._get_one_user_profile(url)
-            for url in track(
-                self.urls, description="Scraping top GitHub profiles..."
+            for url in tqdm(
+                self.urls, desc="Scraping top GitHub profiles..."
             )
         ]
+        else:
+            all_contributors = [
+                self._get_one_user_profile(url)
+                for url in track(
+                    self.urls, description="Scraping top GitHub profiles..."
+                )
+            ]
         all_contributors_df = pd.DataFrame(all_contributors).reset_index(
             drop=True
         )
 
         return all_contributors_df
+
+
+def isnotebook():
+    try:
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell':
+            return True   # Jupyter notebook or qtconsole
+        elif shell == 'TerminalInteractiveShell':
+            return False  # Terminal running IPython
+        else:
+            return False  # Other type (?)
+    except NameError:
+        return False      # Probably standard Python interpreter

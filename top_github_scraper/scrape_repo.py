@@ -10,13 +10,15 @@ import requests
 from dotenv import load_dotenv
 from rich import print
 from rich.progress import track
-from top_github_scraper.utils import ScrapeGithubUrl, UserProfileGetter
+from tqdm import tqdm
+from top_github_scraper.utils import ScrapeGithubUrl, UserProfileGetter, isnotebook
 
 load_dotenv()
 warnings.filterwarnings("ignore")
 
 USERNAME = os.getenv("GITHUB_USERNAME")
 TOKEN = os.getenv("GITHUB_TOKEN")
+
 
 class RepoScraper:
     """Scrape information of repos and the
@@ -28,10 +30,17 @@ class RepoScraper:
 
     def get_all_top_repo_information(self):
         top_repo_infos = []
-        for repo_url in track(
-            self.repo_urls, description="Scraping top GitHub repositories..."
-        ):
-            top_repo_infos.append(self._get_repo_information(repo_url))
+
+        if isnotebook():
+            for repo_url in tqdm(
+            self.repo_urls, desc="Scraping top GitHub repositories..."
+            ):
+                top_repo_infos.append(self._get_repo_information(repo_url))
+        else:
+            for repo_url in track(
+                self.repo_urls, description="Scraping top GitHub repositories..."
+            ):
+                top_repo_infos.append(self._get_repo_information(repo_url))
 
         return top_repo_infos
 
@@ -154,8 +163,11 @@ def get_top_repo_urls(
     repo_urls = ScrapeGithubUrl(
         keyword, 'Repositories', sort_by, start_page, stop_page
     ).scrape_top_repo_url_multiple_pages()
+
     with open(save_path, "w") as outfile:
         json.dump(repo_urls, outfile)
+
+    return repo_urls
 
 
 def get_top_repos(
@@ -200,8 +212,10 @@ def get_top_repos(
         top_repos = RepoScraper(
             repo_urls, max_n_top_contributors
         ).get_all_top_repo_information()
-        with open(repo_save_path, "w") as outfile:
-            json.dump(top_repos, outfile)
+
+    with open(repo_save_path, "w") as outfile:
+        json.dump(top_repos, outfile)
+    return top_repos
 
 
 def get_top_contributors(
@@ -262,9 +276,9 @@ def get_top_contributors(
         top_users = UserProfileGetter(urls).get_all_user_profiles()
         if get_user_info_only:
             top_users.to_csv(user_save_path)
-            print(top_users)
+            return top_users
         else:
             repo_and_top_users = pd.concat([repo_info, top_users], axis=1)
             repo_and_top_users = repo_and_top_users.loc[:,~repo_and_top_users.columns.duplicated()]
             repo_and_top_users.to_csv(user_save_path)
-            print(repo_and_top_users)
+            return repo_and_top_users
