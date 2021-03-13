@@ -124,7 +124,7 @@ Output at `top_contributor_info_<keyword>_<sort_by>_<start_page>_<end_page>.csv`
 ```python
 from top_github_scraper import get_top_users
 
-get_top_users("machine learning", stop_page=20)
+get_top_users("machine learning", stop_page=10)
 ```
 Output at `top_user_info_<keyword>_<start_page>_<end_page>.csv`
 
