@@ -14,7 +14,6 @@ TOKEN = os.getenv("GITHUB_TOKEN")
 
 def get_top_user_urls(
     keyword: str,
-    save_path: str = "top_user_urls",
     save_directory: str=".",
     start_page: int = 1,
     stop_page: int = 50,

@@ -27,7 +27,6 @@ TOKEN = os.getenv("GITHUB_TOKEN")
 if USERNAME is None or TOKEN is None:
     logging.warning("""You are using Github API as an unauthenticated user. For unauthenticated requests, the rate limit allows for up to 60 requests per hour.
      Follow the instruction here to be authenticated and increase your rate limit: https://github.com/khuyentran1401/top-github-scraper#setup""")
-@dataclass
 class ScrapeGithubUrl:
     """Scrape top Github urls based on a certain keyword and type
 
@@ -38,7 +37,7 @@ class ScrapeGithubUrl:
     type: str
         whether to search for User or Repositories
     sort_by: str 
-        sort by best match or most stars, by default '', which will sort by best match. 
+        sort by best match or most stars, by default 'best_match', which will sort by best match. 
         Use 'stars' to sort by most stars.
     start_page_num: int
         page number to start scraping. The default is 0
@@ -50,11 +49,15 @@ class ScrapeGithubUrl:
     List[str]
     """
 
-    keyword: str
-    type: str
-    sort_by: str
-    start_page_num: int
-    stop_page_num: int
+    def __init__(self,keyword: str, type: str, sort_by: str, start_page_num: int, stop_page_num: int):
+        self.keyword = keyword
+        self.type = type
+        self.start_page_num = start_page_num
+        self.stop_page_num = stop_page_num
+        if sort_by =='best_match':
+            self.sort_by = ''
+        else:
+            self.sort_by = sort_by
 
     @staticmethod
     def _keyword_to_url(page_num: int, keyword: str, type: str, sort_by: str):

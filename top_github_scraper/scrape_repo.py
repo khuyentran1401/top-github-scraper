@@ -1,6 +1,5 @@
 import json
 import os
-from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
@@ -134,7 +133,7 @@ class DataProcessor:
 
 def get_top_repo_urls(
     keyword: str,
-    sort_by: str='', 
+    sort_by: str='best_match', 
     save_directory: str=".",
     start_page: int = 1,
     stop_page: int = 10,
@@ -147,7 +146,7 @@ def get_top_repo_urls(
     keyword : str
         Keyword to search for (.i.e, machine learning)
     sort_by: str 
-        sort by best match or most stars, by default '', which will sort by best match. 
+        sort by best match or most stars, by default 'best_match', which will sort by best match. 
         Use 'stars' to sort by most stars.
     save_directory: str, optional 
         directory to save the output file, by default "."
@@ -174,7 +173,7 @@ def get_top_repo_urls(
 
 def get_top_repos(
     keyword: int,
-    sort_by: str='',
+    sort_by: str='best_match',
     save_directory: str=".",
     max_n_top_contributors: int = 10,
     start_page: int = 1,
@@ -188,7 +187,7 @@ def get_top_repos(
     keyword : str
         Keyword to search for (.i.e, machine learning)
     sort_by: str 
-        sort by best match or most stars, by default '', which will sort by best match. 
+        sort by best match or most stars, by default 'best_match', which will sort by best match. 
         Use 'stars' to sort by most stars.
     max_n_top_contributors: int
         number of top contributors in each repository to scrape from, by default 10
@@ -224,7 +223,7 @@ def get_top_repos(
 
 def get_top_contributors(
     keyword: int,
-    sort_by: str='', 
+    sort_by: str='best_match', 
     max_n_top_contributors: int = 10,
     start_page: int = 1,
     stop_page: int = 10,
@@ -239,7 +238,7 @@ def get_top_contributors(
     keyword : str
         Keyword to search for (.i.e, machine learning)
     sort_by: str 
-        sort by best match or most stars, by default '', which will sort by best match. 
+        sort by best match or most stars, by default 'best_match', which will sort by best match. 
         Use 'stars' to sort by most stars.
     max_n_top_contributors: int
         number of top contributors in each repository to scrape from, by default 10
@@ -259,7 +258,7 @@ def get_top_contributors(
     user_save_path : str, optional
         where to save the output file of users' profiles, by default "top_contributor_info"
     """
-    
+
     full_repo_save_path = (
         f"{save_directory}/top_repo_info_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
     )

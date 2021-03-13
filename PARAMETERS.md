@@ -4,7 +4,7 @@
     * `keyword` : str
         Keyword to search for (.i.e, machine learning)
     * `sort_by`: str 
-        sort by best match or most stars, by default `''`, which will sort by best match. 
+        sort by best match or most stars, by default `'best_match'`, which will sort by best match. 
         Use `'stars'` to sort by most stars.
     * `save_directory`: str, optional 
         directory to save the output file, by default `"."`
@@ -16,7 +16,7 @@
     * `keyword` : str
         Keyword to search for (.i.e, machine learning)
     * `sort_by`: str 
-        sort by best match or most stars, by default `''`, which will sort by best match. 
+        sort by best match or most stars, by default `'best_match'`, which will sort by best match. 
         Use `'stars'` to sort by most stars.
     * `max_n_top_contributors`: int
         number of top contributors in each repository to scrape from, by default `10`
@@ -30,7 +30,7 @@
     * `keyword` : str
         Keyword to search for (.i.e, machine learning)
     * `sort_by`: str 
-        sort by best match or most stars, by default `''`, which will sort by best match. 
+        sort by best match or most stars, by default `'best_match'`, which will sort by best match. 
         Use `'stars'` to sort by most stars.
     * `max_n_top_contributors`: int
         number of top contributors in each repository to scrape from, by default `10`
@@ -46,11 +46,6 @@
 * **get_top_users**
     * `keyword` : str
         Keyword to search for (.i.e, machine learning)
-    * `sort_by`: str 
-        sort by best match or most stars, by default '', which will sort by best match. 
-        Use 'stars' to sort by most stars.
-    * `max_n_top_contributors`: int
-        number of top contributors in each repository to scrape from, by default `10`
     * `start_page` : int, optional
         page number to start scraping from, by default `1`
     * `stop_page` : int, optional
