@@ -1,8 +1,9 @@
+ [![Medium article](https://img.shields.io/badge/Medium-View%20on%20Medium-red?logo=medium)](https://khuyentran1476.medium.com/top-github-scraper-scrape-top-github-users-and-repositories-based-on-a-keyword-in-one-line-of-code-d48b29954aac)
 # Top Github Scraper
 
 Scrape top Github repositories and users based on keywords. 
 
-I used this tool to analyze the top 1k machine learning users in [this article](https://towardsdatascience.com/i-scraped-more-than-1k-top-machine-learning-github-profiles-and-this-is-what-i-found-1ab4fb0c0474?sk=68156d6b1c05614d356645728fe02584).
+I used this tool to analyze the top 1k machine learning users in [this article](https://towardsdatascience.com/i-scraped-more-than-1k-top-machine-learning-github-profiles-and-this-is-what-i-found-1ab4fb0c0474?sk=68156d6b1c05614d356645728fe02584) and create an interactive map to search for users in [this article](https://khuyentran1476.medium.com/top-github-scraper-scrape-top-github-users-and-repositories-based-on-a-keyword-in-one-line-of-code-d48b29954aac)
 
 ![demo](https://github.com/khuyentran1401/top-github-scraper/blob/master/figures/demo.gif?raw=True)
 
