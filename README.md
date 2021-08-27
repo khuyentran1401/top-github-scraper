@@ -25,6 +25,8 @@ GITHUB_USERNAME=yourusername
 GITHUB_TOKEN=yourtoken
 ```
 ## Usage
+View full documentation [here](https://khuyentran1401.github.io/top-github-scraper/html/top_github_scraper/index.html).
+
 ### Get Top Github Repositories' URLs
 ```python
 from top_github_scraper import get_top_repo_urls
