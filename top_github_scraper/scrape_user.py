@@ -77,6 +77,8 @@ def get_top_users(
         url = 'https://api.github.com/users'
         urls = [url + user for user in user_urls]
         for i in range(len(urls)):
+            # This is what the HTTP requet needs to be formatted: https://api.github.com/users/ZuzooVn
+            # We need to remove the last part of the URL, after the final '/', to use the API correctly.
             index = urls[i].rfind('/')
             urls[i] = urls[i][:index]
         top_users = UserProfileGetter(urls).get_all_user_profiles()

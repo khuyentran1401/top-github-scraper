@@ -43,7 +43,12 @@ class RepoScraper:
 
     def _get_repo_information(self, repo_url: str):
         repo_info_url = f"https://api.github.com/repos{repo_url}"
-        repo_info = requests.get(repo_info_url, auth=(USERNAME, TOKEN)).json()
+        http_response = requests.get(repo_info_url, auth=(USERNAME, TOKEN))
+        # Checking for a good response on HTTP get request.
+        # An HTTP response of 200 indicates a successful response packet.
+        if http_response.status_code != 200:
+            logging.error(f"You are getting a bad HTTP response when you are requesting info from this URL: {repo_info_url}")
+        repo_info = http_response.json()
         info_to_scrape = ["stargazers_count", "forks_count"]
         repo_important_info = {}
         for info in info_to_scrape:
@@ -61,9 +66,12 @@ class RepoScraper:
         contributor_url = (
             f"https://api.github.com/repos{repo_url}/contributors"
         )
-        contributor_page = requests.get(
-            contributor_url, auth=(USERNAME, TOKEN)
-        ).json()
+        http_response = requests.get(contributor_url, auth=(USERNAME, TOKEN))
+        # Return an empty dictionary if we encouter an error for a particular URL.
+        # This will allow us to keep parsing the rest of the URLs we need to parse without erroring out.
+        if http_response.status_code != 200:
+            return {}
+        contributor_page = http_response.json()
 
         contributors_info = {"login": [], "url": [], "contributions": []}
 

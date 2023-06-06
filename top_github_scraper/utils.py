@@ -100,6 +100,7 @@ class UserProfileGetter:
 
     def __init__(self, urls: List[str]) -> pd.DataFrame:
         self.urls = urls
+        # Comment out the features that you dont want to show up in the final report.
         self.profile_features = [
             "login",
             "url",
