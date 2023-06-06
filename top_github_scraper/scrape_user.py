@@ -1,11 +1,9 @@
 import json
 import os
 from pathlib import Path
-
 from dotenv import load_dotenv
 from rich import print
 from top_github_scraper.utils import ScrapeGithubUrl, UserProfileGetter
-
 
 load_dotenv()
 
@@ -20,17 +18,8 @@ def get_top_user_urls(
 ):
     """Get the URLs of the repositories pop up when searching for a specific
     keyword on GitHub.
-
-    Parameters
-    ----------
-    keyword : str
-        Keyword to search for (.i.e, machine learning)
-    save_directory: str, optional 
-        directory to save the output file, by default "."
-    start_page : int, optional
-        page number to start scraping from, by default 1
-    stop_page : int, optional
-        page number of the last page to scrape, by default 50
+    
+    See PARAMETERs.md for a description of the parameters of this function
     """
     Path(save_directory).mkdir(parents=True, exist_ok=True)
     save_path = f"{save_directory}/top_repo_urls_{keyword}_{start_page}_{stop_page}.json"
@@ -49,16 +38,8 @@ def get_top_users(
     """
     Get the information of the owners and contributors of the repositories pop up when searching for a specific
     keyword on GitHub.
-    Parameters
-    ----------
-    keyword : str
-        Keyword to search for (.i.e, machine learning)
-    start_page : int, optional
-        page number to start scraping from, by default 1
-    stop_page : int, optional
-        page number of the last page to scrape, by default 50
-    save_directory: str, optional 
-        directory to save the output file, by default "."
+    
+    See PARAMETERs.md for a description of the parameters of this function.
     """
     safe_keyword = keyword.replace(" ","_")
     full_url_save_path = (

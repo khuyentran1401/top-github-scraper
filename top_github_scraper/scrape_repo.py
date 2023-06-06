@@ -148,20 +148,8 @@ def get_top_repo_urls(
 ):
     """Get the URLs of the repositories pop up when searching for a specific
     keyword on GitHub.
-
-    Parameters
-    ----------
-    keyword : str
-        Keyword to search for (.i.e, machine learning)
-    sort_by: str 
-        sort by best match or most stars, by default 'best_match', which will sort by best match. 
-        Use 'stars' to sort by most stars.
-    save_directory: str, optional 
-        directory to save the output file, by default "."
-    start_page : int, optional
-        page number to start scraping from, by default 1
-    stop_page : int, optional
-        page number of the last page to scrape, by default 10
+    
+    See PARAMETERs.md for a description of the parameters of this function
     """
     safe_keyword = keyword.replace(" ", "_")
     try: 
@@ -190,22 +178,8 @@ def get_top_repos(
 ):
     """Get the information of the repositories pop up when searching for a specific
     keyword on GitHub.
-
-    Parameters
-    ----------
-    keyword : str
-        Keyword to search for (.i.e, machine learning)
-    sort_by: str 
-        sort by best match or most stars, by default 'best_match', which will sort by best match. 
-        Use 'stars' to sort by most stars.
-    max_n_top_contributors: int
-        number of top contributors in each repository to scrape from, by default 10
-    start_page : int, optional
-        page number to start scraping from, by default 1
-    stop_page : int, optional
-        page number of the last page to scrape, by default 10
-    save_directory: str, optional 
-        directory to save the output file, by default "."
+    
+    See PARAMETERs.md for a description of the parameters of this function
     """
     safe_keyword = keyword.replace(" ", "_")
     try:
@@ -243,30 +217,8 @@ def get_top_contributors(
     """
     Get the information of the owners and contributors of the repositories pop up when searching for a specific
     keyword on GitHub.
-    Parameters
-    ----------
-    keyword : str
-        Keyword to search for (.i.e, machine learning)
-    sort_by: str 
-        sort by best match or most stars, by default 'best_match', which will sort by best match. 
-        Use 'stars' to sort by most stars.
-    max_n_top_contributors: int
-        number of top contributors in each repository to scrape from, by default 10
-    start_page : int, optional
-        page number to start scraping from, by default 1
-    stop_page : int, optional
-        page number of the last page to scrape, by default 10
-    get_user_info_only: bool, optional
-        whether to get the information of only contributors or to get the information of both contributors 
-        and repositories contributors were scraped from, by default True, which means to get only contributors' information
-    save_directory: str, optional 
-        directory to save the output file, by default "."
-    url_save_path : str, optional
-        where to save the output file of URLs, by default "top_repo_urls"
-    repo_save_path : str, optional
-        where to save the output file of repositories' information, by default "top_repo_info"
-    user_save_path : str, optional
-        where to save the output file of users' profiles, by default "top_contributor_info"
+    
+    See PARAMETERs.md for a description of the parameters of this function
     """
     safe_keyword = keyword.replace(" ", "_")
     full_repo_save_path = (
