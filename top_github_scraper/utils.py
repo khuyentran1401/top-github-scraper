@@ -18,9 +18,8 @@ warnings.filterwarnings("ignore")
 
 # Currently dead code. To be added later as an enhancement.
 # TYPES = ['Users', 'Repositories', 'Code', 'Commits', 'Issues', 'Packages', 'Topics']
-# SORT_BY = {'Users': ['followers'],
-#             'Repositories': ['', 'stars']}
-# SCRAPE_CLASS = {'Users': 'mr-1', 'Repositories': "v-align-middle"}
+# SORT_BY = {'Users': ['followers'],'Repositories': ['', 'stars']}
+SCRAPE_CLASS = {'Users': 'mr-1', 'Repositories': "v-align-middle"}
 
 USERNAME = os.getenv("GITHUB_USERNAME")
 TOKEN = os.getenv("GITHUB_TOKEN")
