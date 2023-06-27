@@ -1,11 +1,9 @@
 import json
 import os
 from pathlib import Path
-
 from dotenv import load_dotenv
 from rich import print
 from top_github_scraper.utils import ScrapeGithubUrl, UserProfileGetter
-
 
 load_dotenv()
 
@@ -20,17 +18,8 @@ def get_top_user_urls(
 ):
     """Get the URLs of the repositories pop up when searching for a specific
     keyword on GitHub.
-
-    Parameters
-    ----------
-    keyword : str
-        Keyword to search for (.i.e, machine learning)
-    save_directory: str, optional 
-        directory to save the output file, by default "."
-    start_page : int, optional
-        page number to start scraping from, by default 1
-    stop_page : int, optional
-        page number of the last page to scrape, by default 50
+    
+    See PARAMETERs.md for a description of the parameters of this function
     """
     Path(save_directory).mkdir(parents=True, exist_ok=True)
     save_path = f"{save_directory}/top_repo_urls_{keyword}_{start_page}_{stop_page}.json"
@@ -49,21 +38,14 @@ def get_top_users(
     """
     Get the information of the owners and contributors of the repositories pop up when searching for a specific
     keyword on GitHub.
-    Parameters
-    ----------
-    keyword : str
-        Keyword to search for (.i.e, machine learning)
-    start_page : int, optional
-        page number to start scraping from, by default 1
-    stop_page : int, optional
-        page number of the last page to scrape, by default 50
-    save_directory: str, optional 
-        directory to save the output file, by default "."
+    
+    See PARAMETERs.md for a description of the parameters of this function.
     """
+    safe_keyword = keyword.replace(" ","_")
     full_url_save_path = (
-        f"{save_directory}/top_repo_urls_{keyword}_{start_page}_{stop_page}.json"
+        f"{save_directory}/top_repo_urls_{safe_keyword}_{start_page}_{stop_page}.json"
     )
-    user_save_path = f"{save_directory}/top_user_info_{keyword}_{start_page}_{stop_page}.csv"
+    user_save_path = f"{save_directory}/top_user_info_{safe_keyword}_{start_page}_{stop_page}.csv"
     if not Path(full_url_save_path).exists():
         get_top_user_urls(
             keyword=keyword,
@@ -75,6 +57,11 @@ def get_top_users(
         user_urls = json.load(infile)
         url = 'https://api.github.com/users'
         urls = [url + user for user in user_urls]
+        for i in range(len(urls)):
+            # This is what the HTTP requet needs to be formatted: https://api.github.com/users/ZuzooVn
+            # We need to remove the last part of the URL, after the final '/', to use the API correctly.
+            index = urls[i].rfind('/')
+            urls[i] = urls[i][:index]
         top_users = UserProfileGetter(urls).get_all_user_profiles()
         top_users.to_csv(user_save_path)
         return top_users

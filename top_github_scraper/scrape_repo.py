@@ -43,7 +43,12 @@ class RepoScraper:
 
     def _get_repo_information(self, repo_url: str):
         repo_info_url = f"https://api.github.com/repos{repo_url}"
-        repo_info = requests.get(repo_info_url, auth=(USERNAME, TOKEN)).json()
+        http_response = requests.get(repo_info_url, auth=(USERNAME, TOKEN))
+        # Checking for a good response on HTTP get request.
+        # An HTTP response of 200 indicates a successful response packet.
+        if http_response.status_code != 200:
+            logging.error(f"You are getting a bad HTTP response when you are requesting info from this URL: {repo_info_url}")
+        repo_info = http_response.json()
         info_to_scrape = ["stargazers_count", "forks_count"]
         repo_important_info = {}
         for info in info_to_scrape:
@@ -61,9 +66,12 @@ class RepoScraper:
         contributor_url = (
             f"https://api.github.com/repos{repo_url}/contributors"
         )
-        contributor_page = requests.get(
-            contributor_url, auth=(USERNAME, TOKEN)
-        ).json()
+        http_response = requests.get(contributor_url, auth=(USERNAME, TOKEN))
+        # Return an empty dictionary if we encouter an error for a particular URL.
+        # This will allow us to keep parsing the rest of the URLs we need to parse without erroring out.
+        if http_response.status_code != 200:
+            return {}
+        contributor_page = http_response.json()
 
         contributors_info = {"login": [], "url": [], "contributions": []}
 
@@ -140,24 +148,13 @@ def get_top_repo_urls(
 ):
     """Get the URLs of the repositories pop up when searching for a specific
     keyword on GitHub.
-
-    Parameters
-    ----------
-    keyword : str
-        Keyword to search for (.i.e, machine learning)
-    sort_by: str 
-        sort by best match or most stars, by default 'best_match', which will sort by best match. 
-        Use 'stars' to sort by most stars.
-    save_directory: str, optional 
-        directory to save the output file, by default "."
-    start_page : int, optional
-        page number to start scraping from, by default 1
-    stop_page : int, optional
-        page number of the last page to scrape, by default 10
+    
+    See PARAMETERs.md for a description of the parameters of this function
     """
+    safe_keyword = keyword.replace(" ", "_")
     try: 
         Path(save_directory).mkdir(parents=True, exist_ok=True)
-        full_path = f'{save_directory}/top_repo_urls_{keyword}_{sort_by}_{start_page}_{stop_page}.json'
+        full_path = f'{save_directory}/top_repo_urls_{safe_keyword}_{start_page}_{stop_page}.json'
         repo_urls = ScrapeGithubUrl(
             keyword, 'Repositories', sort_by, start_page, stop_page
         ).scrape_top_repo_url_multiple_pages()
@@ -167,8 +164,8 @@ def get_top_repo_urls(
         return repo_urls
     except Exception as e:
         print(e)
-        logging.error("""You might ran out of rate limit. Are you an authenticated user? If you ran out of rate limit while requesting as an authenticated user, 
-        either decrease the number of pages to scrape or to wait until more requests are available.""")
+        logging.error("""You might be hitting the rate limit of the HitHub API. Have you authenticated your user account?
+                      If you have exceeded the rate limit as an authenticated user, either decrease the number of pages to scrape or to wait until more requests are available.""")
 
 
 def get_top_repos(
@@ -181,28 +178,15 @@ def get_top_repos(
 ):
     """Get the information of the repositories pop up when searching for a specific
     keyword on GitHub.
-
-    Parameters
-    ----------
-    keyword : str
-        Keyword to search for (.i.e, machine learning)
-    sort_by: str 
-        sort by best match or most stars, by default 'best_match', which will sort by best match. 
-        Use 'stars' to sort by most stars.
-    max_n_top_contributors: int
-        number of top contributors in each repository to scrape from, by default 10
-    start_page : int, optional
-        page number to start scraping from, by default 1
-    stop_page : int, optional
-        page number of the last page to scrape, by default 10
-    save_directory: str, optional 
-        directory to save the output file, by default "."
+    
+    See PARAMETERs.md for a description of the parameters of this function
     """
+    safe_keyword = keyword.replace(" ", "_")
     try:
         full_url_save_path = (
-            f"{save_directory}/top_repo_urls_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
+            f"{save_directory}/top_repo_urls_{safe_keyword}_{start_page}_{stop_page}.json"
         )
-        repo_save_path = f"{save_directory}/top_repo_info_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
+        repo_save_path = f"{save_directory}/top_repo_info_{safe_keyword}_{start_page}_{stop_page}.json"
 
         if not Path(full_url_save_path).exists():
             get_top_repo_urls(keyword=keyword, sort_by=sort_by, save_directory=save_directory, start_page=start_page, stop_page=stop_page)
@@ -218,8 +202,8 @@ def get_top_repos(
 
     except Exception as e:  
         print(e)
-        logging.error("""You might ran out of rate limit. Are you an authenticated user? If you ran out of rate limit while requesting as an authenticated user, 
-        either decrease the number of pages to scrape or to wait until more requests are available.""")
+        logging.error("""You might be hitting the rate limit of the HitHub API. Have you authenticated your user account?
+                      If you have exceeded the rate limit as an authenticated user, either decrease the number of pages to scrape or to wait until more requests are available.""")
 
 def get_top_contributors(
     keyword: int,
@@ -233,36 +217,14 @@ def get_top_contributors(
     """
     Get the information of the owners and contributors of the repositories pop up when searching for a specific
     keyword on GitHub.
-    Parameters
-    ----------
-    keyword : str
-        Keyword to search for (.i.e, machine learning)
-    sort_by: str 
-        sort by best match or most stars, by default 'best_match', which will sort by best match. 
-        Use 'stars' to sort by most stars.
-    max_n_top_contributors: int
-        number of top contributors in each repository to scrape from, by default 10
-    start_page : int, optional
-        page number to start scraping from, by default 1
-    stop_page : int, optional
-        page number of the last page to scrape, by default 10
-    get_user_info_only: bool, optional
-        whether to get the information of only contributors or to get the information of both contributors 
-        and repositories contributors were scraped from, by default True, which means to get only contributors' information
-    save_directory: str, optional 
-        directory to save the output file, by default "."
-    url_save_path : str, optional
-        where to save the output file of URLs, by default "top_repo_urls"
-    repo_save_path : str, optional
-        where to save the output file of repositories' information, by default "top_repo_info"
-    user_save_path : str, optional
-        where to save the output file of users' profiles, by default "top_contributor_info"
+    
+    See PARAMETERs.md for a description of the parameters of this function
     """
-
+    safe_keyword = keyword.replace(" ", "_")
     full_repo_save_path = (
-        f"{save_directory}/top_repo_info_{keyword}_{sort_by}_{start_page}_{stop_page}.json"
+        f"{save_directory}/top_repo_info_{safe_keyword}_{start_page}_{stop_page}.json"
     )
-    user_save_path = f"{save_directory}/top_contributor_info_{keyword}_{sort_by}_{start_page}_{stop_page}.csv"
+    user_save_path = f"{save_directory}/top_contributor_info_{safe_keyword}_{start_page}_{stop_page}.csv"
     if not Path(full_repo_save_path).exists():
         get_top_repos(
             keyword=keyword,

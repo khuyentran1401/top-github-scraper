@@ -16,17 +16,17 @@ import logging
 load_dotenv()
 warnings.filterwarnings("ignore")
 
-TYPES = ['Users', 'Repositories', 'Code', 'Commits', 'Issues', 'Packages', 'Topics']
-SORT_BY = {'Users': ['followers'],
-            'Repositories': ['', 'stars']}
+# Currently dead code. To be added later as an enhancement.
+# TYPES = ['Users', 'Repositories', 'Code', 'Commits', 'Issues', 'Packages', 'Topics']
+# SORT_BY = {'Users': ['followers'],'Repositories': ['', 'stars']}
 SCRAPE_CLASS = {'Users': 'mr-1', 'Repositories': "v-align-middle"}
 
 USERNAME = os.getenv("GITHUB_USERNAME")
 TOKEN = os.getenv("GITHUB_TOKEN")
 
 if USERNAME is None or TOKEN is None:
-    logging.warning("""You are using Github API as an unauthenticated user. For unauthenticated requests, the rate limit allows for up to 60 requests per hour.
-     Follow the instruction here to be authenticated and increase your rate limit: https://github.com/khuyentran1401/top-github-scraper#setup""")
+    logging.warning("""You are using a Github API as an unauthenticated user. For unauthenticated requests, you are limited to 60 requests per hour.
+     Follow the instruction here to authenticate yourself and increase your API request limit: https://github.com/khuyentran1401/top-github-scraper#setup""")
 class ScrapeGithubUrl:
     """Scrape top Github urls based on a certain keyword and type
 
@@ -68,7 +68,9 @@ class ScrapeGithubUrl:
     def _scrape_top_repo_url_one_page(self, page_num: int):
         """Scrape urls of top Github repositories in 1 page"""
         url = self._keyword_to_url(page_num, self.keyword, type=self.type, sort_by=self.sort_by)
-        page = requests.get(url)
+        page = requests.get(url, auth=(USERNAME, TOKEN))
+        if page.status_code != 200:
+            print(f"Bad HTTP Response from: {url}. Got an HTTP repsonse of: {page.status_code}.\n Please confirm this URL is valid.")
 
         soup = BeautifulSoup(page.text, "html.parser")
         a_tags = soup.find_all("a", class_=SCRAPE_CLASS[self.type])
@@ -91,7 +93,6 @@ class ScrapeGithubUrl:
                 description="Scraping top GitHub URLs...",
             ):
                 urls.extend(self._scrape_top_repo_url_one_page(page_num))
-
         return urls
 
 class UserProfileGetter:
@@ -99,6 +100,7 @@ class UserProfileGetter:
 
     def __init__(self, urls: List[str]) -> pd.DataFrame:
         self.urls = urls
+        # Comment out the features that you dont want to show up in the final report.
         self.profile_features = [
             "login",
             "url",
@@ -113,6 +115,7 @@ class UserProfileGetter:
             "public_gists",
             "followers",
             "following",
+            "twitter_username",
         ]
 
     def _get_one_user_profile(self, profile_url: str):
